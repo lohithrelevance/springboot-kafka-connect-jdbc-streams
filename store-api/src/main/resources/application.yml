@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: store-api
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/storedb?characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: secret
+
+logging.level:
+  org.hibernate:
+    SQL: DEBUG
+#    type.descriptor.sql.BasicBinder: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure.include: beans, env, health, info, metrics, mappings
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    groups-order: DESC
+    disable-swagger-default-url: true
+
+load-samples:
+  customers.enabled: true
+  products.enabled: true
+
+simulation:
+  orders:
+    total: 10
+    sleep: 100

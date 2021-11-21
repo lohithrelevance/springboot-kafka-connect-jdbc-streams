@@ -1,0 +1,16 @@
+{
+  "type": "record",
+  "name": "ProductDetailList",
+  "namespace": "com.dailyjava.stream.commons.storeapp.avro",
+  "fields": [
+    {
+      "name": "products",
+      "type": {
+        "type": "array",
+        "items": "com.dailyjava.stream.commons.storeapp.avro.ProductDetail"
+      },
+      "default": []
+    }
+  ],
+  "connect.name": "com.dailyjava.stream.commons.storeapp.avro.ProductDetailList"
+}

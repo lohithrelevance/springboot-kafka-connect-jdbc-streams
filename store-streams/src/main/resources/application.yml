@@ -1,0 +1,97 @@
+spring:
+  application:
+    name: store-streams
+  cloud:
+    stream:
+      bindings:
+        process-in-0:
+          destination: mysql.storedb.orders
+          group: storeStreamsGroup
+          consumer:
+            useNativeDecoding: true
+        process-in-1:
+          destination: mysql.storedb.customers
+          group: storeStreamsGroup
+          consumer:
+            useNativeDecoding: true
+        process-in-2:
+          destination: mysql.storedb.orders_products
+          group: storeStreamsGroup
+          consumer:
+            useNativeDecoding: true
+        process-in-3:
+          destination: mysql.storedb.products
+          group: storeStreamsGroup
+          consumer:
+            useNativeDecoding: true
+        process-out-0:
+          destination: store.streams.orders
+          producer:
+            useNativeEncoding: true
+      kafka:
+        streams:
+          binder:
+            brokers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
+            configuration:
+              commit.interval.ms: 1000
+              default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+              default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+          bindings:
+            process-in-0:
+              consumer:
+                keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                valueSerde: com.dailyjava.stream.serde.json.OrderJsonSerde
+            process-in-1:
+              consumer:
+                keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                valueSerde: com.dailyjava.stream.serde.json.CustomerJsonSerde
+                materializedAs: ktable.customers
+            process-in-2:
+              consumer:
+                keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                valueSerde: com.dailyjava.stream.serde.json.OrderProductJsonSerde
+            process-in-3:
+              consumer:
+                keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                valueSerde: com.dailyjava.stream.serde.json.ProductJsonSerde
+                materializedAs: ktable.products
+            process-out-0:
+              producer:
+                keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                valueSerde: com.dailyjava.stream.serde.json.OrderDetailedJsonSerde
+
+management:
+  endpoints:
+    web:
+      exposure.include: beans, env, health, info, metrics, mappings
+  endpoint:
+    health:
+      show-details: always
+
+---
+spring:
+  config:
+    activate.on-profile: avro
+  cloud:
+    stream:
+      kafka:
+        streams:
+          binder:
+            configuration:
+              schema.registry.url: http://${SCHEMA_REGISTRY_HOST:localhost}:${SCHEMA_REGISTRY_PORT:8081}
+          bindings:
+            process-in-0:
+              consumer:
+                valueSerde: com.dailyjava.stream.serde.avro.OrderAvroSerde
+            process-in-1:
+              consumer:
+                valueSerde: com.dailyjava.stream.serde.avro.CustomerAvroSerde
+            process-in-2:
+              consumer:
+                valueSerde: com.dailyjava.stream.serde.avro.OrderProductAvroSerde
+            process-in-3:
+              consumer:
+                valueSerde: com.dailyjava.stream.serde.avro.ProductAvroSerde
+            process-out-0:
+              producer:
+                valueSerde: cocom.dailyjava.stream.serde.avro.OrderDetailedAvroSerde

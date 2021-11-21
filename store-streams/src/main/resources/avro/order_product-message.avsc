@@ -1,0 +1,20 @@
+{
+  "type": "record",
+  "name": "OrderProduct",
+  "namespace": "com.dailyjava.stream.commons.storeapp.avro",
+  "fields": [
+    {
+      "name": "order_id",
+      "type": "string"
+    },
+    {
+      "name": "product_id",
+      "type": "long"
+    },
+    {
+      "name": "unit",
+      "type": "int"
+    }
+  ],
+  "connect.name": "com.dailyjava.stream.commons.storeapp.avro.OrderProduct"
+}
